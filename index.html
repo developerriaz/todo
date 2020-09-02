@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Belgotex Floors To-do List</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <link href="./img/767ca771755f4675d4063c03e17c8595-medical-checklist-icon-by-vexels.png" rel="icon">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <link href="assets/css/styling.css" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <nav class="navbar navbar-dark bg-dark static-top" >
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <img src="./img/767ca771755f4675d4063c03e17c8595-medical-checklist-icon-by-vexels.png" width="30" alt="" loading="lazy">
+                    Mo to-do App
+                </a>
+            </div>
+        </nav>
+
+        <div class="container-fluid" id="hh">
+            <div class="container">
+
+                <div class="row">
+                <h1 style="font-weight: bold;">Simplify your day.</h1>
+                <p>With Mo To-do application you can easily stop forgetting your plans for the day.</p>
+            </div>
+
+            </div>
+        </div>
+        
+        <div class="container mainContainer" >
+            
+            <div class="row" >
+                <span class="col-sm-12 col-md-7" id="list-container">
+
+                    <div>
+                        <h1 >To-do List</h1>
+                        <p id="instruction" >
+                            No to-do items exist. Please create a to-do.
+                        </p>
+                        <ul id="list">
+                            
+                        </ul>
+                    </div>
+                </span>
+                <span class="col-sm-12 col-md-5" id="creatorContainer">
+                    
+                    <div>
+                    <img src="./img/list.png">
+                        <h1>Create a to-do</h1>
+                        <p>Add a task you want to complete.</p>
+                        <label>Title:</label>
+                        <input type="text" id="inputTitle" placeholder="I am planning on..." oninput="counter()" maxlength="50" onload="counter();">
+                        <p id="counter">50 letters left.</p>
+                        <button onclick="addTodo();" id="btnAdd">Add New Todo</button>
+                        <p>Powered by Belgotex Floors</p>
+                    </div>
+                </span>
+
+            </div>
+
+        </div>
+        <div class="container-fluid">
+            <div class="container" style="padding-top:50px;">
+                <h1>Thank you so much for giving me the opportunity to deliver.</h1><br>
+
+            </div>
+        </div>
+
+        <div id="editMode">
+            <span>
+                <h1>Edit a to-do</h1>
+                <label>Title:</label>
+                <input type="text" placeholder="title of the to-do.." id="editTitle">
+
+                <label>(Optional) Why is this so important:</label>
+                <input type="text" placeholder="detail of what you will do..." id="editDetail">
+                <button id="btnUpdate">Update Changes</button>
+                <button id="btnClose" style="margin-top:10px;background-color:white;color:red;">Close</button>
+            </span>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        
+        <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+        <script src="./assets/todo.js" type="text/javascript"></script>
+        <script type="text/javascript">
+
+            const _instruction = document.getElementById("instruction");
+            _instruction.innerText = "Please wait...";
+
+            function addTodo(){
+                var newTitle = $("#inputTitle").val();
+                if(newTitle.length == 0){
+                    alert("To-do title cannot be empty!");
+                    return;
+                }
+                
+                $.ajax({
+                    async:true,
+                    url: "./assets/addNewTodo.php",
+                    method: "GET",
+                    cache:false,
+                    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                    data: "todo="+newTitle,
+                    processData:false, 
+                    beforeSend:function(){
+                        console.log("BeforeSend::");
+                    },
+                    success: function(d){
+                        console.log("Success with "+d);
+                        var json = JSON.parse(d);
+                        new Todo(json['id'],newTitle,"",0).render();
+                        document.getElementById("inputTitle").value = "";
+                        $("#list").empty();
+                        getTodos();
+                        location = location.href+"#"+json['id'];
+                    },
+                    error: function(e){
+                        console.log(e);
+                    },
+                    complete: function(){
+                        console.log("I am done!");
+                    }
+                });
+            }
+
+            function counter(){
+                
+                const counter = document.getElementById("counter");
+                const input = document.getElementById("inputTitle");
+                const btnAdd = document.getElementById("btnAdd");
+
+                var max = 50;
+                var min = 1;
+                var size = input.value.length;
+                var v = (max - size);
+
+                counter.innerHTML = v +" letter"+( (v != 1) ? "s" : "" )+" left.";
+                
+                btnAdd.setAttribute("class", (size>0) ? "btnActive" : "btnInactive");
+                input.focus();
+
+            }
+            counter();
+            
+            function getTodos()
+            {
+                $.ajax({
+                    async:true,
+                    url: "./assets/getTodo.php",
+                    cache:false,
+                    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                    processData:false, 
+                    beforeSend:function(){
+                        console.log("attempting::getTodo");
+                    },
+                    success: function(d){
+                        
+                        var json = JSON.parse(d)['list'];
+                        json.forEach(el => {
+                            console.log(el);
+                            const _id = el.todoID, _title = el.title, _detail = el.details, _status = el.status, _timestamp = el.timestamp;
+                            new Todo(_id,_title,_detail,_status,_timestamp).render();
+                        });
+                        _instruction.innerText = json.length+" to-do tasks created.";
+                    },
+                    error: function(e){
+                        console.log(e);
+                    },
+                    complete: function(){
+                        console.log("I am done!");
+                    }
+                });
+                
+            }
+            getTodos();
+            const editMode = document.getElementById("editMode");
+            $("#btnClose").on("click", function(){
+                editMode.style.visibility = "collapse";
+            });
+
+            $("#inputTitle").on('keyup', function (e) {
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    addTodo();
+                }
+            });
+        </script>
+    </body>
+</html>
