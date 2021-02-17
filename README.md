@@ -3,7 +3,7 @@ This is an application by Muhammad Hlatshwayo.
 
 Mo to-do is a web application. This is an assignment given by Belgotex Floors as an assessment.
 
-Click the link: https://www.test.kloudy.co.za to use the application.
+Click the link: https://www.test.wallof.co.za to use the application.
 Simply add a new to-do. Delete the existing to-do or update it. You also have the option to mark it as complete or incomplete.
 
 I hope you find it usefull.
